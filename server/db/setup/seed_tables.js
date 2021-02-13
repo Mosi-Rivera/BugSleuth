@@ -1,0 +1,1 @@
+require('./run_sql_file')('./db/setup/tables.sql');
