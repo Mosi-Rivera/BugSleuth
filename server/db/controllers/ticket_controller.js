@@ -1,14 +1,14 @@
 const Ticket = require('../models/ticket_model');
 const Worker = require('../models/worker_model');
 const TicketComment = require('../models/ticket_comment_model');
-
+const {isNaN} = Number;
 exports.set_assigned_worker = async (req,res) => {
     try
     {
         let project_id = Number.parseInt(req.body.project_id);
         let ticket_id = Number.parseInt(req.body.ticket_id);
         let worker_id = Number.parseInt(req.body.worker_id);
-        if (project_id == NaN || ticket_id == NaN || worker_id == NaN)
+        if (isNaN(project_id) || isNaN(ticket_id) || isNaN(worker_id))
             throw new Error('Invalid project or ticket id.');
         let worker = await Worker.get_match({
             id: worker_id,
@@ -30,7 +30,7 @@ exports.get_by_project = async (req,res) => {
     try
     {
         let project_id = Number.parseInt(req.params.project_id);
-        if (project_id === NaN)
+        if (isNaN(project_id))
             throw new Error('Invalid id.');
         let worker = res.locals.worker;
         if (!worker || worker.role > 1)
@@ -50,7 +50,7 @@ exports.get_by_assigned_user = async (req,res) => {
     try
     {
         let worker_id = Number.parseInt(req.params.worker_id);
-        if (worker_id === NaN)
+        if (isNaN(worker_id))
             throw new Error('Invalid id.');
         let query = req.query;
         query.assigned_to = worker_id;
