@@ -26,7 +26,7 @@ passport.serializeUser(function(user, cb) {
 passport.deserializeUser(async function(id, cb) {
     try
     {
-        const user = await User.get_match({id});
+        const user = await User.get_by_id(id);
         cb(null,user);
     }
     catch(err)

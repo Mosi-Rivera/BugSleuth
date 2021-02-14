@@ -1,5 +1,5 @@
 const Project = require('../models/project_model');
-
+const Worker = require('../models/worker_model');
 exports.get_by_id = async (req,res) => {
     try
     {
@@ -16,13 +16,29 @@ exports.get_by_id = async (req,res) => {
 }
 
 exports.create = async (req,res) => {
+    let new_project = new Project(req.body);
     try
     {
-        res.status(200).json(await Project.create(new Project(req.body)));
+        new_project.id = await new_project.save();
+        
+        let new_worker = new Worker({
+            user_id: req.user.id,
+            project_id: new_project.id,
+            role: 0,
+        });
+        new_worker.id = await new_worker.save();
+        
+        
+        res.status(200).json({
+            new_project,
+            new_worker
+        });
     }
     catch(err)
     {
         console.log(err);
+        if (new_project.id)
+            Project.remove_by_id(new_project.id);
         res.status(500).json(err);
     }
 }

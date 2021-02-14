@@ -9,6 +9,11 @@ class Project
         this.status = project.status;
     }
 
+    save()
+    {
+        return Project.create(this);
+    }
+
     static create(project)
     {
         return new Promise((resolve,reject) => sql.query(
@@ -48,7 +53,7 @@ class Project
     static remove_by_id(id)
     {
         return new Promise((resolve,reject) => sql.query(
-            'DELETE FROM project WHERE id == ?;',
+            'DELETE FROM project WHERE id = ?;',
             id,
             (err,result) => {
                 if (err)

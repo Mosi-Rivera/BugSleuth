@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS user (
     email     varchar(100) not null unique,
     username  varchar(100) not null,
     password  varchar(100) not null,
+    enabled   boolean not null default 0,
     created   timestamp not null default CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 );
@@ -33,8 +34,34 @@ CREATE TABLE IF NOT EXISTS ticket (
     severity tinyint(1) not null default 0,
     status tinyint(1) not null default 0,
     assigned_to int default null,
+    submitted_by int not null,
     created timestamp not null default CURRENT_TIMESTAMP,
     primary key (id),
     foreign key (assigned_to) references worker(id) on delete set null,
-    foreign key (project_id) references project(id) on delete cascade
+    foreign key (project_id) references project(id) on delete cascade,
+    foreign key (submitted_by) references worker(id)
+);
+
+CREATE TABLE IF NOT EXISTS ticket_comment (
+    id int not null AUTO_INCREMENT,
+    ticket_id int not null,
+    commenter_id int not null,
+    message varchar(200) not null,
+    created timestamp not null default CURRENT_TIMESTAMP,
+    primary key (id),
+    foreign key (commenter_id) references worker(id),
+    foreign key (ticket_id) references ticket(id)
+);
+
+CREATE TABLE IF NOT EXISTS ticket_history (
+    id int not null AUTO_INCREMENT,
+    ticket_id int not null,
+    user_id int not null,
+    field varchar(100) not null,
+    from_value varchar(200) null,
+    to_value varchar(200) null,
+    created timestamp not null default CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    foreign key (ticket_id) references ticket(id) on delete cascade,
+    foreign key (user_id) references worker(id)
 );
