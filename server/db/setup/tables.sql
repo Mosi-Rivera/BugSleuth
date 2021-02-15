@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS ticket_comment (
     created timestamp not null default CURRENT_TIMESTAMP,
     primary key (id),
     foreign key (commenter_id) references worker(id),
-    foreign key (ticket_id) references ticket(id)
+    foreign key (ticket_id) references ticket(id) on delete cascade
 );
 
 CREATE TABLE IF NOT EXISTS ticket_history (

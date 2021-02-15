@@ -1,1 +1,1 @@
-require('./run_sql_file')('./db/setup/tables.sql');
+require('./run_sql_file')('./server/db/setup/tables.sql');

@@ -19,7 +19,7 @@ exports.signup = async (req,res,next) => {
         const password = req.body.password;
         if (!email_validator.validate(email))
             throw new Error('Invalid email.');
-        if (password_validator.validate(password))
+        if (!password_validator.validate(password))
             throw new Error('Invalid password.');
         const user = await User.get_by_email(req.body.email);
         if (user)
