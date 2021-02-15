@@ -1,7 +1,9 @@
 'use strict';
 const {
     invite_worker,
-    create_worker
+    create_worker,
+    set_role,
+    delete_worker
 } = require('../controllers/worker_controller');
 const {
     works_in_project,
@@ -9,6 +11,9 @@ const {
 } = require('../../middleware/auth');
 module.exports = (app) => {
     app.route('/worker')
-    //TODO: delete and update worker and role;
-    .post(is_logged_in,works_in_project,invite_worker,create_worker);
+    .post(is_logged_in,works_in_project(1),invite_worker,create_worker);
+
+    app.route('/worker/:worker_id')
+    .delete(is_logged_in,works_in_project(1),delete_worker)
+    .put(is_logged_in,works_in_project(1),set_role);
 }

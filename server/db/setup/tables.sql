@@ -3,7 +3,8 @@ CREATE TABLE IF NOT EXISTS user (
     email     varchar(100) not null unique,
     username  varchar(100) not null,
     password  varchar(100) not null,
-    enabled   boolean not null default 0,
+    confirmation_code varchar(100) not null,
+    confirmed_email boolean not null default 0,
     created   timestamp not null default CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 );

@@ -6,6 +6,7 @@ const debug             = require('debug')('backend:server');
 const ticket_routes     = require('./db/routes/ticket_routes');
 const project_routes    = require('./db/routes/project_routes');
 const auth_routes       = require('./db/routes/auth_routes');
+const worker_routes     = require('./db/routes/worker_routes');
 const expressStaticGzip = require('express-static-gzip');
 const path              = require('path');
 const {
@@ -23,6 +24,7 @@ require('./config/passport')(app);
 auth_routes(app);
 ticket_routes(app);
 project_routes(app);
+worker_routes(app);
 
 app.use((req, res, next) => {
     if (req.method == 'GET')

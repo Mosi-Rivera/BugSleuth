@@ -44,6 +44,33 @@ class Worker
             }
         ))
     }
+
+    static set_role_by_id(id,role)
+    {
+        return new Promise((resolve,reject) => sql.query(
+            'INSERT INTO worker set role = ? where id = ?;',
+            [role,id],
+            (err,result) => {
+                if (err)
+                    return reject(err);
+                return resolve(result);
+            }
+        ))
+    }
+
+    static delete_by_id()
+    {
+        return new Promise((resolve,reject) => sql.query(
+            'DELETE FROM worker WHERE id = ?;',
+            id,
+            (err,result) => {
+                if (err)
+                    return reject(err);
+                return resolve(result);
+            }
+        ))
+    }
+
     static get_by_id(id)
     {
         return new Promise((resolve,reject) => sql.query(

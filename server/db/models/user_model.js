@@ -21,6 +21,45 @@ class User
         return User.create(this);
     }
 
+    static confirm_email_and_activate(email,password)
+    {
+        return new Promise((resolve,reject) => sql.query(
+            'UPDATE user SET password = ?, confirmed_email = 1 WHERE email = ?',
+            [password,email],
+            (err,result) => {
+                if (err)
+                    return reject(err);
+                return resolve(result);
+            }
+        ))
+    }
+
+    static confirm_email(email)
+    {
+        return new Promise((resolve,reject) => sql.query(
+            'UPDATE user SET confirmed_email = 1 WHERE email = ?',
+            email,
+            (err,result) => {
+                if (err)
+                    return reject(err);
+                return resolve(result);
+            }
+        ))
+    }
+
+    static activate(email,password)
+    {
+        return new Promise((resolve,reject) => sql.query(
+            'UPDATE user SET password = ? WHERE email = ?',
+            [password,email],
+            (err,result) => {
+                if (err)
+                    return reject(err);
+                return resolve(result);
+            }
+        ))
+    }
+
     static get_by_email(email)
     {
         return new Promise((resolve,reject) => sql.query(
@@ -67,7 +106,7 @@ class User
             (err,result) => {
                 if (err)
                     return reject(err);
-                return resolve(result.isertId);
+                return resolve(result.insertId);
             }
         ));
     }

@@ -43,6 +43,8 @@ passport.use(new LocalStrategy({
         try
         {
             let user = (await User.get_match({email:username}))[0];
+            if (user.enabled == false)
+                throw new Error('Unauthorized.');
             if (!user)
                 return done(null,false,{message: 'Incorrect email.'});
             if (!(await bcrypt.compare(password,user.password)))
