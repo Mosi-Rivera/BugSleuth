@@ -1,9 +1,12 @@
 const nodemailer = require('nodemailer');
+const bcrypt = require('bcrypt');
+const uniqid = require('uniqid');
+const User = require('../db/models/user_model');
 const {
     email_service,
     email_user,
     email_password
-} = require('../../keys');
+} = require('../keys');
 const transporter = nodemailer.createTransport({
     service: email_service,
     auth: {
@@ -37,14 +40,25 @@ exports.worker_notice = (email,username) => {
     });
 }
 
-exports.confirmation_email = (email,username,confirmation_code) => {
-    transporter.sendMail({
-        from: email_user,
-        to: email,
-        subject: `Confirm your email.`,
-        html: `<div>
-            <h1>Hi ${username}.</h1>
-            <a href='http://localhost:4200/confirm_email?email=${email}&cc=${confirmation_code}'>Confirm email!</a>
-        </div>`
-    });
+exports.send_confirmation_email = async (email,username) => {
+    try
+    {
+        let confirmation_code = uniqid();
+        let salt = await bcrypt.genSalt(10);
+        let confirmation_hash = await bcrypt.hash(confirmation_code,salt);
+        User.set_confirmation_code(email,confirmation_hash);
+        transporter.sendMail({
+            from: email_user,
+            to: email,
+            subject: `Confirm your email.`,
+            html: `<div>
+                <h1>Hi ${username}.</h1>
+                <a href='http://localhost:4200/confirm_email?email=${email}&cc=${confirmation_code}'>Confirm email!</a>
+            </div>`
+        });
+    }
+    catch(err)
+    {
+        console.log(err);
+    }
 } 

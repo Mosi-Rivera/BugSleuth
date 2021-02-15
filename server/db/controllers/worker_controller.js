@@ -33,7 +33,7 @@ exports.invite_worker = async (req,res,next) => {
             });
             new_user.id = await new_user.save();
             res.locals.user = new_user;
-            worker_invitation(email,req.user.username,activation_code);
+            worker_invitation(email,req.user.username,confirmation_code);
         }
         else
         {

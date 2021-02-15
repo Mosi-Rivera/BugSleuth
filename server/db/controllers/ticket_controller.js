@@ -104,13 +104,8 @@ exports.create_comment = async (req,res) => {
 exports.create = async (req,res) => {
     try
     {
-        const worker = (await Worker.get_match({user_id: req.user.id,project_id: req.body.project_id}))[0];
-        if (
-            !worker ||
-            worker.role > 3
-        )
-            throw new Error('Unauthorized');
-        const new_ticket = new Ticket(req.body,req.user.id);
+        const worker = res.locals.worker;
+        const new_ticket = new Ticket(req.body,worker.id);
         new_ticket.id = await new_ticket.save();
         res.status(200).json(new_ticket);
     }

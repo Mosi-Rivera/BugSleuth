@@ -9,7 +9,9 @@ const password_validator = (new (require('password-validator'))()
 const email_validator = require('email-validator');
 const bcrypt = require('bcrypt');
 const rounds = 10;
+const uniqid = require('uniqid');
 const {isNaN} = Number;
+const {send_confirmation_email} = require('../../mailer/methods');
 exports.signup = async (req,res,next) => {
     try
     {
@@ -29,26 +31,29 @@ exports.signup = async (req,res,next) => {
             {
                 if (!(await bcrypt.compare(key,user.confirmation_code)))
                     throw new Error('Error.');
-                const salt = await bcrypt.genSalt(round);
-                const hashpass = await bcrypt(password,salt);
-                await User.confirm_and_activate(email,hashpass);
+                const salt = await bcrypt.genSalt(rounds);
+                const hashpass = await bcrypt.hash(password,salt);
+                await User.confirm_email_and_activate(email,hashpass);
                 return next();
             }
-            const salt = await bcrypt.genSalt(round);
-            const hashpass = await bcrypt(password,salt);
+            const salt = await bcrypt.genSalt(rounds);
+            const hashpass = await bcrypt.hash(password,salt);
             await User.activate(email,hashpass);
-            //TODO: Send confirmation email;
+            send_confirmation_email(email,user.username);
             return next();
         }
         const salt = await bcrypt.genSalt(rounds);
         const hashpass = await bcrypt.hash(password,salt);
+        const confirmation_code = uniqid();
+        const confirmation_hash = await bcrypt.hash(confirmation_code,salt); 
         let new_user = new User({
             email,
             password: hashpass,
             username: email.split('@')[0],
-            enabled: true
+            confirmation_code: confirmation_hash
         });
         await new_user.save();
+        send_confirmation_email(email,new_user.username);
         next();
     }
     catch(err)

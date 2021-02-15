@@ -13,12 +13,24 @@ class User
         this.email = user.email;
         this.password = user.password;
         this.username = user.username;
-        this.enabled = user.enabled || false;
+        this.confirmation_code = user.confirmation_code;
     }
 
     save()
     {
         return User.create(this);
+    }
+
+    static set_confirmation_code(email,confirmation_code){
+        return new Promise((resolve,reject) => sql.query(
+            'UPDATE user SET confirmation_code = ? WHERE email = ?;',
+            [confirmation_code,email],
+            (err,result) => {
+                if (err)
+                    return reject(err);
+                return resolve(result);
+            }
+        ))
     }
 
     static confirm_email_and_activate(email,password)
