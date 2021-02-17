@@ -12,3 +12,15 @@ export const create_project = data => (
     .then(error_handler)
     .then(res => res.json())
 );
+
+export const get_projects = () => (
+    fetch(BASE_URL + '/projects',{
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+    })
+    .then(error_handler)
+    .then(res => res.json())
+)

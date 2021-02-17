@@ -1,4 +1,4 @@
-import {useHistory} from 'react-router-dom';
+import {useHistory,useLocation} from 'react-router-dom';
 import {useDispatch} from 'react-redux';
 import {USER_LOGOUT} from '../../redux/store';
 import {useEffect} from 'react';
@@ -12,19 +12,23 @@ const get_form_data = e => {
     }
 }
 
-const LandingPage = () => {
+const LandingPage = props => {
     const history = useHistory();
+    const location = useLocation();
     const dispatch = useDispatch();
     const handle_signup = async e => {
         e.preventDefault();
         try
         {
+            const {state} = location;
             const signup_data= get_form_data(e);
             const {signup} = await import('../../api/routes/auth');
             const {authenticate} = await import('../../redux/reducers/r_auth');
-            console.log(signup_data);
             dispatch(authenticate(await signup(signup_data)));
-            history.push('/home');
+            if (state && state.form)
+                history.replace(state.from.pathname);
+            else
+                history.replace('/home');
         }
         catch(err)
         {
@@ -35,10 +39,14 @@ const LandingPage = () => {
         e.preventDefault();
         try
         {
+            const {state} = location;
             const {login} = await import('../../api/routes/auth');
             const {authenticate} = await import('../../redux/reducers/r_auth');
             dispatch(authenticate(await login(get_form_data(e))));
-            history.push('/home');
+            if (state && state.form)
+                history.replace(state.from.pathname);
+            else
+                history.replace('/home');
         }
         catch(err)
         {
@@ -49,13 +57,18 @@ const LandingPage = () => {
         (async () => {
             try
             {
+                const {state} = location;
                 const {is_logged_in} = await import('../../api/routes/auth');
                 const {authenticate} = await import('../../redux/reducers/r_auth');
                 dispatch(authenticate(await is_logged_in()));
-                history.push('/home');
+                if (state && state.from)
+                    history.replace(state.from.pathname);
+                else
+                    history.replace('/home');
             }
             catch(err)
             {
+                console.log(err);
                 dispatch(USER_LOGOUT());
             }
         })();

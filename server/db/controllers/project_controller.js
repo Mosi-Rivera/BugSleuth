@@ -16,6 +16,18 @@ exports.get_by_id = async (req,res) => {
     }
 }
 
+exports.get_user_projects = async (req,res) => {
+    try
+    {
+        res.status(200).json(await Project.get_user_projects(req.user.id));
+    }
+    catch(err)
+    {
+        console.log(err);
+        res.status(500).json(err);
+    }
+}
+
 exports.create = async (req,res) => {
     let new_project = new Project(req.body);
     try
@@ -30,10 +42,7 @@ exports.create = async (req,res) => {
         new_worker.id = await new_worker.save();
         
         
-        res.status(200).json({
-            new_project,
-            new_worker
-        });
+        res.status(200).json(new_project);
     }
     catch(err)
     {

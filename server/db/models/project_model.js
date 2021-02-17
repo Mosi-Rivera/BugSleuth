@@ -14,6 +14,19 @@ class Project
         return Project.create(this);
     }
 
+    static get_user_projects(id)
+    {
+        return new Promise((resolve,reject) => sql.query(
+            'SELECT * FROM project WHERE id IN ( SELECT worker.project_id FROM worker WHERE user_id = ? );',
+            id,
+            (err,result) => {
+                if (err)
+                    return reject(err);
+                return resolve(result);
+            }
+        ))
+    }
+
     static create(project)
     {
         return new Promise((resolve,reject) => sql.query(

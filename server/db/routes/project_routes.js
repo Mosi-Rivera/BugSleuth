@@ -4,6 +4,7 @@ const {
     get_by_id,
     update_by_id,
     delete_by_id,
+    get_user_projects
 } = require('../controllers/project_controller');
 const {
     is_logged_in,
@@ -12,6 +13,7 @@ const {
 module.exports = function(app)
 {
     app.route('/projects')
+    .get(is_logged_in,get_user_projects)
     .post(is_logged_in,create);
 
     app.route('/projects/:project_id')
