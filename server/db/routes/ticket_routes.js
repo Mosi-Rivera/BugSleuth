@@ -16,7 +16,7 @@ module.exports = function(app)
 {
     app.route('/tickets')
     .get(is_logged_in,get_match)
-    .post(is_logged_in,works_in_project(2),create);
+    .post(is_logged_in,works_in_project(3),create);
 
     app.route('/tickets/:ticket_id')
     .get(is_logged_in,works_in_project(3),get_by_id)

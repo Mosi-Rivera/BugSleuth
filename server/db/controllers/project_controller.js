@@ -1,5 +1,6 @@
 const Project = require('../models/project_model');
 const Worker = require('../models/worker_model');
+const Ticket = require('../models/ticket_model');
 const {isNaN} = Number;
 exports.get_by_id = async (req,res) => {
     try
@@ -7,7 +8,12 @@ exports.get_by_id = async (req,res) => {
         let id = Number.parseInt(req.params.project_id);
         if (isNaN(id))
             throw new Error('Invalid id.');
-        res.status(200).json(await Project.get_by_id(id));
+        const [project,tickets] = await Promise.all([
+            Project.get_by_id(id),
+            Ticket.get_by_project(id)
+        ]);
+        const worker = res.locals.worker;
+        res.status(200).json({project,tickets,worker_id: worker.id,worker_role: worker.role});
     }
     catch(err)
     {

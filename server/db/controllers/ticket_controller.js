@@ -1,6 +1,7 @@
 const Ticket = require('../models/ticket_model');
 const Worker = require('../models/worker_model');
 const TicketComment = require('../models/ticket_comment_model');
+const TicketHistory = require('../models/ticket_history_model');
 const {isNaN} = Number;
 exports.set_assigned_worker = async (req,res) => {
     try
@@ -122,7 +123,12 @@ exports.get_by_id = async (req,res) => {
         const id = req.params.ticket_id;
         if (!id)
             throw new Error('No id provided.');
-        res.status(200).json(await Ticket.get_by_id(id));
+        const [ticket,comments,history] = await Promise.all([
+            Ticket.get_by_id(id),
+            TicketComment.get_all_by_id(id),
+            TicketHistory.get_all_by_id(id)
+        ]);
+        res.status(200).json({ticket,comments,history});
     }
     catch(err)
     {

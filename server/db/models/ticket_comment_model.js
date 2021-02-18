@@ -14,6 +14,19 @@ class TicketComment
         return TicketComment.create(this);
     }
 
+    static get_all_by_id(id)
+    {
+        return new Promise((resolve,reject) => sql.query(
+            'SELECT *  FROM ticket_comment WHERE ticket_id = ?;',
+            id,
+            (err,result) => {
+                if (err)
+                    return reject(err);
+                return resolve(result);
+            }
+        ))
+    }
+
     static create(obj)
     {
         return new Promise((resolve,reject) => sql.query(

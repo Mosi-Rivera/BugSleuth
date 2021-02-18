@@ -16,6 +16,19 @@ class TicketHistory
         return TicketHistory.create(this);
     }
 
+    static get_all_by_id(id)
+    {
+        return new Promise((resolve,reject) => sql.query(
+            'SELECT * FROM ticket_history WHERE ticket_id = ?;',
+            id,
+            (err,result) => {
+                if (err)
+                    return reject(err);
+                return resolve(result);
+            }
+        ));
+    }
+
     static create_many(original,obj,ticket_id,user_id)
     {
         let keys = Object.keys(obj);
@@ -42,7 +55,7 @@ class TicketHistory
                     return reject(err);
                 return resolve(result.insertId);
             }
-        ))
+        ));
     }
 }
 
