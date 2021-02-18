@@ -28,7 +28,6 @@ const CreateProject = () => {
         }
     }
     return  <div className='slider'>
-        <NavBar/>
         <div>
             <h3>Create a new project</h3>
         </div>

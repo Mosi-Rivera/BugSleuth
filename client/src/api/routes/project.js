@@ -13,6 +13,18 @@ export const create_project = data => (
     .then(res => res.json())
 );
 
+export const get_project_by_id = id => (
+    fetch(BASE_URL + '/projects/' + id, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+    })
+    .then(error_handler)
+    .then(res => res.json())
+)
+
 export const get_projects = () => (
     fetch(BASE_URL + '/projects',{
         method: 'GET',
