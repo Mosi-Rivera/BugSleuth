@@ -1,5 +1,18 @@
 import {BASE_URL,error_handler} from '../environment';
 
+export const submit_comment = (data) => (
+    fetch(BASE_URL + '/comment', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(data)
+    })
+    .then(error_handler)
+    .then(res => res.json())
+);
+
 export const get_ticket = id => (
     fetch(BASE_URL + '/tickets/' + id, {
         method: 'GET',

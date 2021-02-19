@@ -1,11 +1,13 @@
 import {createAction,createReducer} from '@reduxjs/toolkit';
-export const set_project    = createAction('set_project');
-export const set_tickets    = createAction('set_tickets');
-export const add_ticket     = createAction('add_ticket');
-export const set_worker     = createAction('set_worker');
-export const clear          = createAction('clear');
+export const set_project     = createAction('set_project');
+export const set_tickets     = createAction('set_tickets');
+export const add_ticket      = createAction('add_ticket');
+export const set_worker      = createAction('set_worker');
+export const set_all_workers = createAction('set_all_workers');
+export const clear           = createAction('clear');
 const state = {
     tickets: [],
+    workers: [],
     project: null,
     worker_id: null,
     worker_role: null
@@ -30,8 +32,14 @@ export default createReducer(state,{
     },
     [set_worker.type]: (state,data) => {
         let payload = data.payload;
+        if (!payload)
+            return state;
         state.worker_role   = payload.role;
         state.worker_id     = payload.id;
+        return state;
+    },
+    [set_all_workers.type]: (state,data) => {
+        state.workers = data.payload;
         return state;
     }
 });
