@@ -71,6 +71,19 @@ class Worker
         ))
     }
 
+    static get_by_project_id(id)
+    {
+        return new Promise((resolve,reject) => sql.query(
+            'SELECT worker.id, role, username, email FROM worker INNER JOIN user ON worker.user_id = user.id WHERE project_id = ?;',
+            id,
+            (err,result) => {
+                if (err)
+                    return reject(err);
+                return resolve(result);
+            }
+        ))
+    }
+
     static get_by_id(id)
     {
         return new Promise((resolve,reject) => sql.query(

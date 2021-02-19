@@ -8,12 +8,13 @@ exports.get_by_id = async (req,res) => {
         let id = Number.parseInt(req.params.project_id);
         if (isNaN(id))
             throw new Error('Invalid id.');
-        const [project,tickets] = await Promise.all([
+        const [project,tickets,workers] = await Promise.all([
             Project.get_by_id(id),
-            Ticket.get_by_project(id)
+            Ticket.get_by_project(id),
+            Worker.get_by_project_id(id)
         ]);
         const worker = res.locals.worker;
-        res.status(200).json({project,tickets,worker_id: worker.id,worker_role: worker.role});
+        res.status(200).json({project,tickets,worker_id: worker.id,worker_role: worker.role, workers});
     }
     catch(err)
     {

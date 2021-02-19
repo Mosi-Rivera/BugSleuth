@@ -3,7 +3,7 @@ const User = require('../models/user_model');
 const email_validator = require('email-validator');
 const uniqid = require('uniqid');
 const bcrypt = require('bcrypt');
-const {isNaN} = Number;
+const {isNaN,parseInt} = Number;
 const {
     worker_invitation,
     worker_notice
@@ -81,6 +81,24 @@ exports.delete_worker = async (req,res) => {
             return res.status(401).send('Unauthorized.');
         await Worker.delete_by_id(worker_id);
         res.status(200).send('Worker (' + worker_id + ') deleted.');
+    }
+    catch(err)
+    {
+        console.log(err);
+        res.status(500).json(err);
+    }
+}
+
+exports.get_worker = async (req,res) => {
+    const project_id = Number.parseInt(req.params.project_id);
+    try
+    {
+        if (isNaN(project_id))
+            throw new Error('Invalid id');
+        const result = await Worker.get_match({ user_id: req.user.id, project_id });
+        res.status(200).json(
+            result[0]
+        );
     }
     catch(err)
     {
