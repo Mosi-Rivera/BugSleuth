@@ -11,3 +11,16 @@ export const get_worker = project_id => (
     .then(error_handler)
     .then(res => res.json())
 );
+
+export const invite_worker = data => (
+    fetch(BASE_URL + '/worker',{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(data)
+    })
+    .then(error_handler)
+    .then(res => res.json())
+)

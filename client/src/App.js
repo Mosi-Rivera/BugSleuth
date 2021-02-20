@@ -7,6 +7,7 @@ import ProjectPage from './pages/project/project';
 import CreateProjectPage from './pages/CreateProjectPage/CreateProjectPage';
 import CreateTicketPage  from './pages/CreateTicketPage/CreateTicketPage';
 import TicketPage from './pages/TicketPage/TicketPage';
+
 function App() {
   const auth = useSelector(state => state.auth.authenticated);
   console.log(auth);
@@ -14,10 +15,9 @@ function App() {
     <Switch>
       <GuardedRoute path='/home'                          component={ HomePage }          auth={auth} />
       <GuardedRoute path='/new_project'                   component={ CreateProjectPage } auth={auth} />
-      <GuardedRoute path='/ticket/:ticket_id'             component={ TicketPage }  auth={auth} />
+      <GuardedRoute path='/ticket/:ticket_id'             component={ TicketPage }        auth={auth} />
       <GuardedRoute path='/new_ticket'                    component={ CreateTicketPage }  auth={auth} />
       <GuardedRoute path='/project/:project_id'           component={ ProjectPage }       auth={auth} />
-      <GuardedRoute path='/ticket'                        component={ () => <div></div>}  auth={auth} />
       <Route path='/' default>
           <LandingPage/>
       </Route>

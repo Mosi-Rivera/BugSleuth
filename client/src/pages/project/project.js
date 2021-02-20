@@ -6,6 +6,7 @@ import CardView from "../../views/card_view/card_view"
 import CardList from '../../components/card_list/card_list';
 import TicketCard from '../../components/ticket_card/ticket_card';
 import WorkerCard from '../../components/worker_card/worker_card';
+import AddWorker from "../../components/add_worker/add_worker";
 
 const MyAssignedTickets = props => {
     const {tickets,worker_id} = useSelector(state => state.active_project);
@@ -36,12 +37,15 @@ const StickyBarBody = memo(props => <div>
     <div onClick={() => props.set_tab(2)}>My Assigned Tickets</div>
     <div onClick={() => props.set_tab(3)}>Workers</div>
     <Link to={{pathname: '/new_ticket', state: { from: props.location }}}>Submit Ticket</Link>
+    <div onClick={props.open_invite_worker}>Add Worker</div>
 </div>);
 
 const ProjectPage = props => {
     const {project_id} = useParams();
     const history = useHistory();
     const [tab,set_tab] = useState(0);
+    const [show_add_worker,set_show_add_modal] = useState(false);
+    const handle_hide = () => set_show_add_modal(false);
     const dispatch = useDispatch();
     const active_tab = useMemo(() => {
         if (tab == 0)
@@ -74,10 +78,19 @@ const ProjectPage = props => {
             }
         })();
     },[]);
-    return <CardView
-    sticky_bar={<StickyBar body={<StickyBarBody set_tab={set_tab}/>}/>}
-    card_list={active_tab}
-    />
+    return <div>
+        <AddWorker show={show_add_worker} onHide={handle_hide}/>
+        <CardView
+        sticky_bar={
+            <StickyBar body={
+                <StickyBarBody open_invite_worker={
+                    () => set_show_add_modal(true)
+                } set_tab={set_tab}/>
+            }
+        />}
+        card_list={active_tab}
+        />
+    </div>
 }
 
 export default ProjectPage;
