@@ -1,0 +1,19 @@
+.button
+{
+    background-color: #21262d;
+    color: #c9d1d9;
+    width: 100%;
+    display: inline-block;
+    margin: 1rem 0px;
+    text-align: center;
+    padding: 5px 16px;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    line-height: 20px;
+    font-weight: 500;
+    font-size: 14px;
+    text-decoration: none;
+}

@@ -16,16 +16,18 @@ const AddWorker = props => {
                 role: data.get('role'),
                 email: data.get('email'),
             })));
+            e.target.reset();
+            props.onHide();
         }
         catch(err)
         {
             console.log(err);
-            props.on_close();
+            props.onHide();
         }
     }
     return <Modal show={props.show} onHide={props.onHide} size='sm' centered>
         <Modal.Body>
-            <form>
+            <form onSubmit={handle_submit}>
                 <div>
                     <input name='email' type='email' placeholder='email' />
                 </div>

@@ -1,4 +1,4 @@
-
+import('./stickybar.css');
 
 const StickyBar = props => {
     return <div className='c-sticky-bar'>

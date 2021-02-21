@@ -7,6 +7,7 @@ import CardList from '../../components/card_list/card_list';
 import TicketCard from '../../components/ticket_card/ticket_card';
 import WorkerCard from '../../components/worker_card/worker_card';
 import AddWorker from "../../components/add_worker/add_worker";
+import ProjectData from '../../components/project_data/project_data';
 
 const MyAssignedTickets = props => {
     const {tickets,worker_id} = useSelector(state => state.active_project);
@@ -79,8 +80,9 @@ const ProjectPage = props => {
         })();
     },[]);
     return <div>
-        <AddWorker show={show_add_worker} onHide={handle_hide}/>
+        <AddWorker show={show_add_worker} onHide={handle_hide} project_id={project_id}/>
         <CardView
+        profile_data={ProjectData}
         sticky_bar={
             <StickyBar body={
                 <StickyBarBody open_invite_worker={

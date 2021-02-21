@@ -2,9 +2,9 @@ import {useSelector}    from 'react-redux';
 import CardView         from '../../views/card_view/card_view';
 import CardList         from '../../components/card_list/card_list';
 import ProjectCard      from '../../components/project_card/project_card';
-import CreateProject    from '../../components/create_project/create_project';
 import StickyBar        from '../../components/StickyBar/StickyBar';
 import { useEffect, useMemo, useState } from 'react';
+import ProfileData      from '../../components/profile_data/profile_data';
 import {useDispatch} from 'react-redux';
 
 const TicketView = () => {
@@ -46,6 +46,7 @@ const HomePage = () => {
         return TicketView;
     },[tab]);
     return <CardView
+    profile_data={ProfileData}
     sticky_bar={<StickyBar body={<StickyBarBody set_tab={set_tab}/>}/>}
     card_list={active_tab}
     />

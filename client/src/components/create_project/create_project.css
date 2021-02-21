@@ -1,0 +1,13 @@
+.c-create-project > div
+{
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.c-create-project h1
+{
+    margin-bottom: 8px;
+    font-size: 24px;
+    font-weight: 400;
+}

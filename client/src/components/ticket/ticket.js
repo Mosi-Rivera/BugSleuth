@@ -1,30 +1,41 @@
 import { useEffect, useState } from 'react';
 import { useDispatch,useSelector } from 'react-redux';
 import { useLocation, useParams, useHistory } from 'react-router-dom';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import StickyBar from '../StickyBar/StickyBar';
+import Tab from '../tab/tab';
+import {Link} from 'react-router-dom';
+import('./ticket.css');
+const Comment = props => (<div className='comment'>
+    <div className='comment-header'>
+        <span>{props.data?.username}</span>
+        <span className='created'>{props.data?.created}</span>
+    </div>
+    <div>
+        {props.data?.message}
+    </div>
+</div>)
 
 const TicketComments = props => (<div>
     {
-        props.data?.map((elem,i) => <div key={'comment-' + i}>
-            <h3>{elem?.username}</h3>
-            <div>
-                <p>{elem?.message}</p>
-                <span>{elem.created}</span>
-            </div>
-        </div>)
+        props.data?.map((elem,i) => <Comment key={'comment-' + i} data={elem} />)
     }
-    <div>
-        <form id='ticket-comment' onSubmit={props.submit_comment}>
-            <div>
-                <textarea form='ticket-comment' name='message'/>
-            </div>
-            <div>
-                <input type='submit' value='send' />
-            </div>
-        </form>
+    <div className='write-comment'>
+        <div>
+            <form id='ticket-comment' onSubmit={props.submit_comment}>
+                <div>
+                    <textarea form='ticket-comment' name='message' placeholder='Leave a comment...'/>
+                </div>
+                <div>
+                    <input type='submit' value='send' />
+                </div>
+            </form>
+        </div>
     </div>
 </div>);
 
-const TicketHistory = props => (<div>
+const TicketHistory = props => (<div className='c-table'>
     <table>
         <thead>
             <tr>
@@ -49,11 +60,21 @@ const TicketHistory = props => (<div>
     </table>
 </div>); 
 
-const TicketData = props => (<div>
-    <h3>{props.data?.task}</h3>
-    <p>{props.data?.description}</p>
-    <span>assigned to: {props.assigned_to ? props.assigned_to : 'N/A'}</span>
+const TicketData = props => (<div className='ticket-data'>
     <div>
+        <span>title</span>
+        <span>{props.data?.task}</span>
+    </div>
+    <div>
+        <span>description</span>
+        <span>{props.data?.description}</span>
+    </div>
+    <div>
+        <span>assigned to</span>
+        <span>{props.assigned_to ? props.assigned_to : 'n/a'}</span>
+    </div>
+    <div>
+        <span>status</span>
         {
             props.assigned || props.admin ? (
             <select onFocus={e => e.target.previous_value = e.target.value} onChange={props.on_status_change}>
@@ -64,6 +85,9 @@ const TicketData = props => (<div>
             </select>
             ) : <span>{props.data?.status}</span> 
         }
+    </div>
+    <div>
+        <span>severity</span>
         {
             props.assigned || props.admin ? (
             <select onFocus={e => e.target.previous_value = e.target.value} onChange={props.on_status_change}>
@@ -82,6 +106,7 @@ const Ticket = props => {
     const dispatch      = useDispatch();
     const location      = useLocation();
     const routerHistory = useHistory();
+    const [tab,set_tab] = useState(0);
     const [submitting_comment,set_submitting_comment]   = useState(false);
     const [submitting_status,set_submitting_status]     = useState(false);
     const [submitting_severity,set_submitting_Severity] = useState(false);
@@ -113,6 +138,8 @@ const Ticket = props => {
         let data = new FormData(e.target);
         try
         {
+            if (data.get('message')?.replace(/\s+/g, '') == '')
+                return;
             const {add_comments} = await import('../../redux/reducers/r_active_ticket');
             const {submit_comment} = await import('../../api/routes/ticket');
             set_submitting_comment(true);
@@ -152,13 +179,27 @@ const Ticket = props => {
             }
         })();
     },[]);
-    return ticket ? <div>
-        <TicketData assigned={project.worker_id === ticket.assigned_to} admin={project.worker_id <= 1} data={ticket} />
-        
-        <TicketComments submit_comment={handle_submit_comment} data={comments} />
-
-        <TicketHistory data={history} />
-
+    return ticket ? <div className='ticket-container'>
+        <StickyBar body={
+            [
+                <Link key={'sticky-ticket-item-0'} to={'/project/' + ticket.project_id} className='back-button'>Back</Link>
+                ,<Tab key={'sticky-ticket-item-1'} tabs={[{name: 'comments', count: comments?.length},{name: 'history'}]} tab={tab} set_tab={set_tab} />
+            ]
+            } />
+        <Row>
+            <Col sm={12} md={9}>
+                {
+                    tab === 0 ? (
+                        <TicketComments submit_comment={handle_submit_comment} data={comments} />
+                    ) : (
+                        <TicketHistory data={history} />
+                    )
+                }
+            </Col>
+            <Col sm={12} md={3}>
+                <TicketData assigned={project.worker_id === ticket.assigned_to} admin={project?.worker_role <= 1} data={ticket} />
+            </Col>
+        </Row>
     </div> : <div>loading...</div>
 }
 

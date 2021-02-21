@@ -5,7 +5,8 @@ import {Container}  from 'react-bootstrap';
 const ComponentView = props => (
     <div className='pseudo-body'>
         <NavBar/>
-        <Container>
+        { props.sticky_bar && <props.sticky_bar/> }
+        <Container fluid={ props.size ? props.size : 'xl'}>
             <props.component/>
         </Container>
     </div>

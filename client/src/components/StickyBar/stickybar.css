@@ -1,0 +1,43 @@
+.c-sticky-bar
+{
+    display: flex;
+    background-color: var(--background);
+    margin-top: 24px;
+    border-bottom: 1px solid var(--border-color);
+    height: 48px;
+    position: sticky;
+    top: 0px;
+    z-index: 1000;
+}
+
+.c-sticky-bar > div
+{
+    display: flex;
+    flex-flow: row nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    justify-content: center;
+    height: 100%;
+    margin: 0 auto;
+}
+
+.c-sticky-bar > div > div,
+.c-sticky-bar > div > a
+{
+    box-sizing: content-box;
+    padding: 8px 16px;
+    height: 30px;
+    font-size: 14px;
+    line-height: 1.5;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--text-color-secondary);
+    border-bottom: 2px solid transparent;
+}
+
+.c-sticky-bar > div > div:hover,
+.c-sticky-bar > div > a:hover
+{
+    color: #c9d1d9;
+    border-color: #6e7681;
+}

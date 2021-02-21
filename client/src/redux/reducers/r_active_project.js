@@ -3,6 +3,7 @@ export const set_project     = createAction('set_project');
 export const set_tickets     = createAction('set_tickets');
 export const add_ticket      = createAction('add_ticket');
 export const set_worker      = createAction('set_worker');
+export const add_worker      = createAction('add_Worker');
 export const set_all_workers = createAction('set_all_workers');
 export const clear           = createAction('clear');
 const state = {
@@ -40,6 +41,10 @@ export default createReducer(state,{
     },
     [set_all_workers.type]: (state,data) => {
         state.workers = data.payload;
+        return state;
+    },
+    [add_worker.type]: (state,data) => {
+        state.workers.push(data.payload);
         return state;
     }
 });

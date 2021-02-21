@@ -1,0 +1,28 @@
+.card-list
+{
+    width: 100%;
+}
+
+.card-list > div
+{
+    width: 100%;
+    border-bottom: 1px solid var(--border-color);
+    padding: 24px 0px;
+}
+
+.card-list p
+{
+    color: var(--text-color-secondary);
+    margin-bottom: 8px;
+    padding-right: 24px;
+    margin-top: 8px;
+    width: 75%;
+    font-size: 14px;
+}
+
+.card-list a
+{
+    font-weight: 600;
+    font-size: 20px;
+    margin-bottom: 4px;
+}

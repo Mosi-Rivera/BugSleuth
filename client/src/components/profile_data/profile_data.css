@@ -1,0 +1,25 @@
+.profile-data
+{
+    padding-top: 24px;
+}
+
+.profile-data span
+{
+    display: block;
+    text-align: center;
+    font-weight: 300;
+    line-height: 24px;
+    font-size: 20px;
+    padding-bottom: 8px;
+}
+
+.profile-data .username,
+.profile-data .title
+{
+    color: var(--text-color-secondary);
+}
+
+.profile-data .description
+{
+    padding: 0px 1rem;
+}

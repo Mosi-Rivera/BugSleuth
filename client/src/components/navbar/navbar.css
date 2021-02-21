@@ -1,0 +1,33 @@
+.navbar
+{
+    height: 62px;
+    padding: 16px 24px;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: var(--foreground);
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.navbar > div > div,
+.navbar .title
+{
+    padding: 16px 0px;
+    margin: -16px 0px;
+    margin-right: 16px;
+    width: fit-content;
+    font-weight: 600;
+    color: #f0f6fc;
+    white-space: nowrap;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.navbar > div > div:hover,
+.navbar .title:hover
+{
+    color: #f0f6fcb3;
+    cursor: pointer;
+}

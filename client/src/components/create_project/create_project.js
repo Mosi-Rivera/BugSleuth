@@ -1,7 +1,7 @@
 import { useState }     from 'react';
 import NavBar           from '../../components/navbar/navbar';
 import {useDispatch}    from 'react-redux';
-
+import('./create_project.css');
 const CreateProject = () => {
     const dispatch = useDispatch()
     const [waiting_for_response,set_waiting_for_response] = useState(false);
@@ -27,34 +27,34 @@ const CreateProject = () => {
             console.log(err);
         }
     }
-    return  <div className='slider'>
+    return  <div className='c-create-project'>
         <div>
-            <h3>Create a new project</h3>
+            <h1>Create a new project</h1>
         </div>
-        <div>
-            <form onSubmit={handle_submit} id='create-project'>
-                <div>
-                    <label htmlFor='title'>Project Name</label>
-                    <input type='text' name='title' placeholder='Project Title...'/>
-                    <span>Great project names are short and descriptive.</span>
-                </div>
-                <div>
-                    <label htmlFor='info'>Description</label>
-                    <input type='description' name='info'/>
-                </div>
-                <div>
-                    <label htmlFor='status'>Status</label>
-                    <select name='status'>
-                        <option defaultValue value={0}>Open</option>
-                        <option value={1}>Development</option>
-                        <option value={2}>Testing</option>
-                        <option value={3}>Closed</option>
-                    </select>
-                </div>
-                
-                { waiting_for_response ? <div>creating...</div> : <input type='submit' value='create'/> }
-            </form>
-        </div>
+        <form onSubmit={handle_submit} id='create-project'>
+            <div>
+                <label htmlFor='title'>Project Name</label>
+                <input type='text' name='title' />
+                <span>Project names should be short and descriptive.</span>
+            </div>
+            <hr/>
+            <div>
+                <label htmlFor='info'>Description</label>
+                <input type='description' name='info'/>
+            </div>
+            <hr/>
+            <div>
+                <label htmlFor='status'>Status</label>
+                <select name='status'>
+                    <option defaultValue value={0}>Open</option>
+                    <option value={1}>Development</option>
+                    <option value={2}>Testing</option>
+                    <option value={3}>Closed</option>
+                </select>
+            </div>
+            <hr/>
+            { waiting_for_response ? <div className='loading-button'>creating...</div> : <input type='submit' value='create'/> }
+        </form>
     </div> ;
 }
 

@@ -1,0 +1,27 @@
+.c-tab
+{
+    width: 100%;
+    justify-content: flex-start !important;
+    margin-bottom: -1px;
+    height: 48px !important;
+}
+
+.c-tab .tab
+{
+    text-transform: capitalize;
+    font-weight: 400;
+    padding: 8px 16px;
+    border-bottom: none;
+    height: 48px;
+    box-sizing: border-box;
+}
+
+.c-tab .active
+{
+    background-color: var(--background);
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-color-primary);
+    border-bottom: none !important;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
