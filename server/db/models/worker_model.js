@@ -20,6 +20,19 @@ class Worker
         return Worker.create(this);
     }
 
+    static get_by_email_in_project(email,project_id)
+    {
+        return new Promise((resolve,reject) => sql.query(
+            'SELECT COUNT(*) FROM worker WHERE project_id = ?, user_id IN (SELECT user.id FROM user WHERE email = ?);',
+            [project_id,email],
+            (err,result) => {
+                if (err)
+                    return reject(err);
+                return resolve(result.insertId);
+            }
+        ))
+    }
+
     static create(obj)
     {
         return new Promise((resolve,reject) => sql.query(

@@ -91,6 +91,9 @@ exports.list_all = async (req,res) => {
 exports.create_comment = async (req,res) => {
     try
     {
+        let message = req.body.message;
+        if (typeof message !== 'string' || message.replace(/\s+/g, '') == '')
+            return res.status(500).send('No comment provided.');
         let new_comment = new TicketComment(req.body,res.locals.worker.id);
         new_comment.id = await new_comment.save();
         res.status(200).json(new_comment);

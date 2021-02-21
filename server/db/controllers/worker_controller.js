@@ -52,12 +52,16 @@ exports.invite_worker = async (req,res,next) => {
 exports.create_worker = async (req,res) => {
     try
     {
+        if ((await Worker.get_by_email_in_project(res.locals.user.email,res.locals.worker.project_id))[0])
+            return res.status(200).send('Invitation sent.');
         let new_worker = new Worker({
             user_id: res.locals.user.id,
             project_id: res.locals.worker.project_id,
             role: req.body.role || 3,
         });
         new_worker.id = await new_worker.save();
+        new_worker.username = res.locals.user.username;
+        new_worker.email = res.locals.user.email;
         return res.status(200).json(new_worker);
     }
     catch(err)
