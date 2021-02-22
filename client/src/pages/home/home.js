@@ -48,8 +48,8 @@ const HomePage = props => {
             }
         })();
     },[]);
-    console.log(props.user);
-    return <CardView
+    return <CardView 
+    {...props}
     profile_data={<ProfileData user={props.user} />}
     sticky_bar={<StickyBar body={<StickyBarBody tab={tab} set_tab={set_tab}/>}/>}
     card_list={active_tab()}

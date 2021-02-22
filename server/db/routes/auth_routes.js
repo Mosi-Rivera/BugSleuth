@@ -6,8 +6,12 @@ module.exports = function(app)
     const {
         signup,
         login_success,
-        confirm_email
+        confirm_email,
+        logout
     } = require('../controllers/auth_controller');
+
+    app.route('/logout')
+    .get(is_logged_in,logout);
 
     app.route('/signup')
     .post(

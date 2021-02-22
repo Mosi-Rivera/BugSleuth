@@ -7,7 +7,6 @@ import CreateProjectPage from './pages/CreateProjectPage/CreateProjectPage';
 import CreateTicketPage  from './pages/CreateTicketPage/CreateTicketPage';
 import TicketPage from './pages/TicketPage/TicketPage';
 import {useState} from 'react';
-
 function App() {
   const [authenticated,set_authenticated] = useState(false);
   const [user,set_user]                   = useState(null);

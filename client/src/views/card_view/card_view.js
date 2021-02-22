@@ -7,7 +7,7 @@ import('./card_view.css');
 function CardView(props)
 {
     return <div id='pseudo-body'>
-        <NavBar/>
+        <NavBar logout={props.logout}/>
         { props.sticky_bar }
         <Container fluid='xl'>
             <Row>

@@ -34,7 +34,7 @@ const StickyBarBody = memo(props => <div>
     <div onClick={props.open_invite_worker}>Add Worker</div>
 </div>);
 
-const ProjectPage = () => {
+const ProjectPage = props => {
     const {project_id} = useParams();
     const history = useHistory();
     const [tab,set_tab]         = useState(0);
@@ -82,6 +82,7 @@ const ProjectPage = () => {
     return <div>
         <AddWorker add_worker={handle_add_worker} show={show_add_worker} onHide={handle_hide} project_id={project_id}/>
         <CardView
+        {...props}
         profile_data={<ProjectData project={project}/>}
         sticky_bar={
             <StickyBar body={

@@ -1,6 +1,6 @@
 import {useHistory,useLocation} from 'react-router-dom';
-import {useEffect} from 'react';
-
+import {useEffect,useState} from 'react';
+import('./landing.css');
 const get_form_data = e => {
     let data = new FormData(e.target);
     console.log(e,e.target,e.current);
@@ -13,6 +13,8 @@ const get_form_data = e => {
 const LandingPage = props => {
     const history = useHistory();
     const location = useLocation();
+    const [show_login,set_show_login] = useState(true);
+    const toggle_show_login = () => set_show_login(!show_login);
     const handle_signup = async e => {
         e.preventDefault();
         try
@@ -66,24 +68,47 @@ const LandingPage = props => {
         })();
     },[]);
     return <div className='pseudo-body'>
-        <form onSubmit={handle_login}>
-            <div>
-                <input type='email' placeholder='email' name='email'/>
-            </div>
-            <div>
-                <input type='password' placeholder='password' name='password'/>
-            </div>
-            <input type='submit' value='Log In'/>
-        </form>
-        <form onSubmit={handle_signup}>
-            <div>
-                <input type='email' placeholder='email' name='email'/>
-            </div>
-            <div>
-                <input type='password' placeholder='password' name='password'/>
-            </div>
-            <input type='submit' value='Sign Up'/>
-        </form>
+        <div className='c-auth-form'>
+            {
+                show_login ? <div>
+                    <h1>Sign in to BugSleuth</h1>
+                    <div className='form'>
+                        <form onSubmit={handle_login}>
+                            <div>
+                                <label for='email'>email</label>
+                                <input type='email' name='email'/>
+                            </div>
+                            <div>
+                                <label for='password'>password</label>
+                                <input type='password' name='password'/>
+                            </div>
+                            <input type='submit' value='Sign In'/>
+                        </form>
+                    </div>
+                    <div className='form-toggle'>
+                        <p>New to Bug Sleuth? <span onClick={toggle_show_login}> Create an account.</span></p>
+                    </div>
+                </div> : <div>
+                    <h1>Sign up to BugSleuth</h1>
+                    <div className='form'>
+                        <form onSubmit={handle_signup}>
+                            <div>
+                                <label for='email'>email</label>
+                                <input type='email' name='email'/>
+                            </div>
+                            <div>
+                                <label for='password'>password</label>
+                                <input type='password' name='password'/>
+                            </div>
+                            <input type='submit' value='Sign Up'/>
+                        </form>
+                    </div>
+                    <div className='form-toggle'>
+                        <p>Already have an account? <span onClick={toggle_show_login}> Click here to Sign In.</span></p>
+                    </div>
+                </div>
+            }
+        </div>
     </div>;
 }
 

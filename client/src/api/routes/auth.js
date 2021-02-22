@@ -39,3 +39,15 @@ export const signup = data => (
     .then(error_handler)
     .then(res => res.json())
 );
+
+export const logout = data => (
+    fetch(BASE_URL + '/logout',{
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+    })
+    .then(error_handler)
+    .then(res => res.json())
+);
