@@ -1,6 +1,4 @@
 import {useHistory,useLocation} from 'react-router-dom';
-import {useDispatch} from 'react-redux';
-import {USER_LOGOUT} from '../../redux/store';
 import {useEffect} from 'react';
 
 const get_form_data = e => {
@@ -15,16 +13,13 @@ const get_form_data = e => {
 const LandingPage = props => {
     const history = useHistory();
     const location = useLocation();
-    const dispatch = useDispatch();
     const handle_signup = async e => {
         e.preventDefault();
         try
         {
             const {state} = location;
-            const signup_data= get_form_data(e);
             const {signup} = await import('../../api/routes/auth');
-            const {authenticate} = await import('../../redux/reducers/r_auth');
-            dispatch(authenticate(await signup(signup_data)));
+            props.authenticate(await signup(get_form_data(e)));
             if (state && state.form)
                 history.replace(state.from.pathname);
             else
@@ -41,8 +36,7 @@ const LandingPage = props => {
         {
             const {state} = location;
             const {login} = await import('../../api/routes/auth');
-            const {authenticate} = await import('../../redux/reducers/r_auth');
-            dispatch(authenticate(await login(get_form_data(e))));
+            props.authenticate(await login(get_form_data(e)));
             if (state && state.form)
                 history.replace(state.from.pathname);
             else
@@ -59,8 +53,7 @@ const LandingPage = props => {
             {
                 const {state} = location;
                 const {is_logged_in} = await import('../../api/routes/auth');
-                const {authenticate} = await import('../../redux/reducers/r_auth');
-                dispatch(authenticate(await is_logged_in()));
+                props.authenticate(await is_logged_in());
                 if (state && state.from)
                     history.replace(state.from.pathname);
                 else
@@ -69,7 +62,6 @@ const LandingPage = props => {
             catch(err)
             {
                 console.log(err);
-                dispatch(USER_LOGOUT());
             }
         })();
     },[]);

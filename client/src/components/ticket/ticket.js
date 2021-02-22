@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
-import { useDispatch,useSelector } from 'react-redux';
 import { useLocation, useParams, useHistory } from 'react-router-dom';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import StickyBar from '../StickyBar/StickyBar';
 import Tab from '../tab/tab';
 import {Link} from 'react-router-dom';
+import SelectInput from '../select_input/select_input';
+import {status_str,severity_str} from '../../value_to_string';
 import('./ticket.css');
+
 const Comment = props => (<div className='comment'>
     <div className='comment-header'>
         <span>{props.data?.username}</span>
@@ -49,11 +51,11 @@ const TicketHistory = props => (<div className='c-table'>
         <tbody>
             {
                 props.data?.map((elem,i) => <tr key={'history-row' + i}>
-                    <td>{elem?.username}</td>
+                    <td>{elem?.email}</td>
                     <td>{elem?.field}   </td>
-                    <td>{elem?.from}    </td>
-                    <td>{elem?.to}      </td>
-                    <td>{elem?.date}    </td>
+                    <td>{elem.field == 'severity' ? severity_str(elem?.from_value) : status_str(elem?.from_value) }</td>
+                    <td>{elem.field == 'severity' ? severity_str(elem?.to_value) : status_str(elem?.to_value) }</td>
+                    <td>{elem?.created}    </td>
                 </tr>)
             }
         </tbody>
@@ -77,60 +79,94 @@ const TicketData = props => (<div className='ticket-data'>
         <span>status</span>
         {
             props.assigned || props.admin ? (
-            <select onFocus={e => e.target.previous_value = e.target.value} onChange={props.on_status_change}>
-                <option value={0} defaultValue>something</option>
-                <option value={0}>mething</option>
-                <option value={0}>thing</option>
-                <option value={0}>ing</option>
-            </select>
-            ) : <span>{props.data?.status}</span> 
+                <SelectInput options={[
+                    {value: 0,name: status_str(0)},
+                    {value: 1,name: status_str(1)},
+                    {value: 2,name: status_str(2)},
+                    {value: 3,name: status_str(3)},
+                    {value: 4,name: status_str(4)},
+                    {value: 5,name: status_str(5)},
+                    {value: 6,name: status_str(6)},
+                ]} 
+                onFocus={e => e.target.previous_value = e.target.value}
+                onChange={props.set_status}
+                default_value={props.data?.status}
+                />
+            ) : <span>{status_str(props.data?.status)}</span> 
         }
     </div>
     <div>
         <span>severity</span>
         {
             props.assigned || props.admin ? (
-            <select onFocus={e => e.target.previous_value = e.target.value} onChange={props.on_status_change}>
-                <option value={0} defaultValue>something</option>
-                <option value={0}>mething</option>
-                <option value={0}>thing</option>
-                <option value={0}>ing</option>
-            </select>
-            ) : <span>{props.data?.severity}</span> 
+                <SelectInput options={[
+                    {value: 0,name: severity_str(0)},
+                    {value: 1,name: severity_str(1)},
+                    {value: 2,name: severity_str(2)},
+                ]} 
+                onFocus={e => e.target.previous_value = e.target.value}
+                onChange={props.set_severity}
+                default_value={props.data?.severity}
+                />
+            ) : <span>{severity_str(props.data?.severity)}</span> 
         }
     </div>
 </div>);
 
 const Ticket = props => {
     const {ticket_id}   = useParams();
-    const dispatch      = useDispatch();
     const location      = useLocation();
     const routerHistory = useHistory();
-    const [tab,set_tab] = useState(0);
-    const [submitting_comment,set_submitting_comment]   = useState(false);
-    const [submitting_status,set_submitting_status]     = useState(false);
-    const [submitting_severity,set_submitting_Severity] = useState(false);
-    const {ticket,comments,history} = useSelector(state => state.active_ticket);
-    const project = useSelector(state => state.active_project);
-    const handle_submit_status = async e => {
+    const [tab,set_tab]                 = useState(0);
+    const [ticket,set_ticket]           = useState(null);
+    const [comments,set_comments]       = useState([]);
+    const [history,set_history]         = useState([]);
+    const [worker_id,set_worker_id]     = useState(null);
+    const [worker_role,set_worker_role] = useState(null);
+    const handle_submit_severity = async e => {
         e.preventDefault();
         try
         {
             let value = e.target.value;
-            const {set_status} = await import('../../redux/reducers/r_active_ticket');
-            const set_status_project_tickets = (await import('../../redux/reducers/r_active_project')).set_status;
-            const {submit_status} = await import('../../api/routes/ticket');
-            set_submitting_status(true);
-            let result = await submit_status({status: value});
-            dispatch(set_status(value));
-            dispatch(set_status_project_tickets({value: value, id: ticket.id}));
-            set_submitting_status(false);
+            const {submit_severity} = await import('../../api/routes/ticket');
+            await submit_severity(value,ticket_id);
+            let _tmp = [...history];
+            _tmp.push({
+                email: props.user?.email,
+                field: 'severity',
+                from_value: e.target.previous_value,
+                to_value: value,
+                created: (new Date()).toDateString(),
+            });
+            set_history(_tmp);
         }
         catch(err)
         {
             console.log(err);
             e.target.value = e.target.previous_value;
-            set_submitting_status(false);
+        }
+    }
+    const handle_submit_status = async e => {
+        e.preventDefault();
+        try
+        {
+            let value = e.target.value;
+            const {submit_status} = await import('../../api/routes/ticket');
+            await submit_status(value,ticket_id);
+            let _tmp = [...history];
+            _tmp.push({
+                email: props.user?.email,
+                field: 'status',
+                from_value: e.target.previous_value,
+                to_value: value,
+                created: (new Date()).toDateString(),
+            });
+            set_history(_tmp);
+        }
+        catch(err)
+        {
+            console.log(err);
+            e.target.value = e.target.previous_value;
         }
     }
     const handle_submit_comment = async e => {
@@ -140,34 +176,30 @@ const Ticket = props => {
         {
             if (data.get('message')?.replace(/\s+/g, '') == '')
                 return;
-            const {add_comments} = await import('../../redux/reducers/r_active_ticket');
             const {submit_comment} = await import('../../api/routes/ticket');
-            set_submitting_comment(true);
-            dispatch(add_comments(await submit_comment({ticket_id: ticket.id, message: data.get('message')})));
-            set_submitting_comment(false);
+            const response = await submit_comment({ticket_id: ticket.id, message: data.get('message')});
+            response.created = (new Date()).toDateString();
+            let _tmp = [...comments];
+            _tmp.push({...response});
+            set_comments(_tmp);
             e.target.reset();
         }
         catch(err)
         {
             console.log(err);
-            set_submitting_comment(false);
         }
     }
     useEffect(() => {
         (async () => {
             try
             {
-                const {set_all} = await import('../../redux/reducers/r_active_ticket');
                 const {get_ticket} = await import('../../api/routes/ticket');
-                const ticket = await get_ticket(ticket_id);
-                dispatch(set_all(ticket));
-                if (!project.worker_id)
-                {
-                    const {set_worker} = await import('../../redux/reducers/r_active_project');
-                    const {get_worker} = await import('../../api/routes/worker');
-                    console.log(ticket);
-                    dispatch(set_worker(await get_worker(ticket.ticket.project_id)));
-                }
+                const {ticket,comments,history,worker_id,worker_role} = await get_ticket(ticket_id);
+                set_ticket(ticket);
+                set_comments(comments);
+                set_history(history);
+                set_worker_id(worker_id);
+                set_worker_role(worker_role);
             }
             catch(err)
             {
@@ -180,7 +212,7 @@ const Ticket = props => {
         })();
     },[]);
     return ticket ? <div className='ticket-container'>
-        <StickyBar body={
+        <StickyBar reverse body={
             [
                 <Link key={'sticky-ticket-item-0'} to={'/project/' + ticket.project_id} className='back-button'>Back</Link>
                 ,<Tab key={'sticky-ticket-item-1'} tabs={[{name: 'comments', count: comments?.length},{name: 'history'}]} tab={tab} set_tab={set_tab} />
@@ -197,10 +229,10 @@ const Ticket = props => {
                 }
             </Col>
             <Col sm={12} md={3}>
-                <TicketData assigned={project.worker_id === ticket.assigned_to} admin={project?.worker_role <= 1} data={ticket} />
+                <TicketData set_status={handle_submit_status} set_severity={handle_submit_severity} assigned={worker_id === ticket.assigned_to} admin={worker_role <= 1} data={ticket} />
             </Col>
         </Row>
-    </div> : <div>loading...</div>
+    </div> : <div></div>
 }
 
 export default Ticket;

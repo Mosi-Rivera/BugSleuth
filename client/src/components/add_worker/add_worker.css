@@ -1,0 +1,22 @@
+.modal-add-worker
+{
+    background-color: var(--foreground);
+}
+
+.modal-add-worker select
+{
+    max-width: none;
+    /* margin: 8px 0px; */
+}
+
+.modal-add-worker h3
+{
+    margin-top: 0px;
+    /* margin-bottom: 8px; */
+    text-align: center;
+}
+
+.modal-add-worker hr
+{
+    margin: 8px 0px;
+}

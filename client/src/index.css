@@ -13,6 +13,22 @@
   --border-color-primary: #30363d;
 }
 
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(104, 104, 104, 0.61);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(104, 104, 104);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(116, 116, 116);
+}
+
 body {
   background-color: var(--background);
   color: var(--text-color-primary);
@@ -27,6 +43,13 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.empty-list
+{
+  position: relative;
+  top: 30px;
+  color: var(--text-color-secondary);
 }
 
 a {
@@ -45,6 +68,7 @@ select
   background-color: var(--foreground);
   color: var(--text-color-primary);
   border-color: var(--border-color-primary);
+  max-width: 200px;
 }
 
 table
@@ -69,13 +93,17 @@ th
   font-size: 14px;
   font-weight: 600;
   background-color: var(--foreground);
-  color: var(--text-color-primary);
+  color: var(--text-color-secondary);
 }
 
 td
 {
   font-size: 16px;
   font-weight: 400;
+  padding: 0px 16px;
+  font-weight: 500;
+  font-size: 15px;
+  color: var(--text-color-secondary);
 }
 
 hr

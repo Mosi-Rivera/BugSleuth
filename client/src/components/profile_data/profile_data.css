@@ -23,3 +23,12 @@
 {
     padding: 0px 1rem;
 }
+
+.profile-data > div,
+.project-data > div
+{
+    margin-top: 8px;
+    border-radius: 6px;
+    padding: 8px 16px;
+    border: 1px solid var(--border-color);
+}

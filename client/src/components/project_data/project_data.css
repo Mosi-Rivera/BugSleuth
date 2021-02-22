@@ -1,0 +1,16 @@
+.profile-data span
+{
+    color: var(--text-color-secondary);
+    font-size: 16px;
+}
+
+.profile-data .title
+{
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.profile-data .description
+{
+    font-weight: 600;
+}

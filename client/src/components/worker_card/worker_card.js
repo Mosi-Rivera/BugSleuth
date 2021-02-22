@@ -1,5 +1,5 @@
 import {Link} from 'react-router-dom';
-
+import {role_str} from '../../value_to_string';
 const WorkerCard = props => {
     return <div>
         <div>
@@ -10,7 +10,7 @@ const WorkerCard = props => {
                     <span>{props.data?.username}</span>
                 )
             }
-            <span>{props.data?.role}</span>
+            <span>{role_str(props.data?.role)}</span>
         </div>
     </div>
 }

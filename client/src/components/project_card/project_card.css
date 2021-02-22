@@ -1,0 +1,26 @@
+.project-card-container
+{
+    display: flex;
+}
+
+.project-card-container > div
+{
+    flex: 1 1;;
+}
+
+.project-card-container > div:last-child
+{
+    flex: 0 1;
+}
+
+.project-card-container > div:last-child span
+{
+    border: 1px solid var(--border-color-primary);
+    border-radius: 6px;
+    padding: 5px 16px;
+    line-height: 1.5;
+    font-size: 14px;
+    text-transform: capitalize;
+    font-weight: 600;
+    color: var(--text-color-secondary);
+}

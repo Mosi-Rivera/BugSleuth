@@ -1,13 +1,18 @@
-.c-create-project > div
+.c-create-project > div:first-child,
+.c-create-ticket > div:first-child
 {
     padding-bottom: 8px;
     margin-bottom: 12px;
     border-bottom: 1px solid var(--border-color);
 }
 
-.c-create-project h1
+.c-create-project h1,
+.c-create-ticket h1,
+.c-create-project > div:first-child a,
+.c-create-ticket > div:first-child a
 {
     margin-bottom: 8px;
     font-size: 24px;
     font-weight: 400;
+    display: inline-block;
 }

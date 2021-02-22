@@ -1,25 +1,23 @@
 import { useState }     from 'react';
-import NavBar           from '../../components/navbar/navbar';
-import {useDispatch}    from 'react-redux';
+import {Link, useHistory}           from 'react-router-dom';
 import('./create_project.css');
 const CreateProject = () => {
-    const dispatch = useDispatch()
+    const history = useHistory();
     const [waiting_for_response,set_waiting_for_response] = useState(false);
     const handle_submit = async e => {
         try
         {
             e.preventDefault();
             const {create_project} = await import('../../api/routes/project');
-            const {add_project} = await import('../../redux/reducers/projects');
             const data = new FormData(e.target);
             set_waiting_for_response(true);
-            const new_project = await create_project({
+            await create_project({
                 title:  data.get('title'),
                 info:   data.get('info'),
                 status: data.get('status')
             });
-            dispatch(add_project(new_project));
             set_waiting_for_response(false);
+            history.replace('/home');
         }
         catch(err)
         {
@@ -29,7 +27,8 @@ const CreateProject = () => {
     }
     return  <div className='c-create-project'>
         <div>
-            <h1>Create a new project</h1>
+            <Link to='/home'>Back</Link>
+            <h1>/Create a new project</h1>
         </div>
         <form onSubmit={handle_submit} id='create-project'>
             <div>

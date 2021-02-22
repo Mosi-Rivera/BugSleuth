@@ -3,6 +3,12 @@
     margin-bottom: 50px;
 }
 
+.ticket-container input[type='submit']
+{
+    width: fit-content;
+    margin-left: auto;
+}
+
 .comment,
 .write-comment
 {

@@ -3,7 +3,7 @@ import { Route, Redirect } from "react-router-dom";
 const GuardedRoute = ({ component: Component, auth, ...rest }) => (
     <Route {...rest} render={(props) => (
         auth === true
-            ? <Component {...props} />
+            ? <Component {...rest} {...props} />
             : <Redirect to={{
                 pathname: '/',
                 state: { from: props.location }

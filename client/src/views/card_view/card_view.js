@@ -12,14 +12,13 @@ function CardView(props)
         <Container fluid='xl'>
             <Row>
                 <Col sm={12} md={3}>
-                    { props.profile_data &&  <props.profile_data/> }
+                    { props.profile_data &&  props.profile_data }
                 </Col>
                 <Col sm={12} md={9}>
-                    <props.card_list/>
+                    {props.card_list}
                 </Col>
             </Row>
         </Container>
-        {props.sliders?.map((SliderComponent,i) => <SliderComponent key={'slider-' + i}/>)}
     </div>
 }
 
