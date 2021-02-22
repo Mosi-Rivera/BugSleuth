@@ -28,6 +28,19 @@ class Ticket
         return Ticket.create(this);
     }
 
+    static get_by_assigned_user(id)
+    {
+        return new Promise((resolve,reject) => sql.query(
+            'SELECT * FROM ticket WHERE assigned_to = ?;',
+            id,
+            (err,result) => {
+                if (err)
+                    return reject(err);
+                return resolve(result);
+            }
+        ));
+    }
+
     static get_by_project(id)
     {
         return new Promise((resolve,reject) => sql.query(

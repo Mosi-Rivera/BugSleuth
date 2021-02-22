@@ -19,7 +19,7 @@ class TicketHistory
     static get_all_by_id(id)
     {
         return new Promise((resolve,reject) => sql.query(
-            'SELECT * FROM ticket_history WHERE ticket_id = ?;',
+            'SELECT user.email, ticket_history.from_value, ticket_history.to_value, ticket_history.created, ticket_history.field FROM ticket_history JOIN worker ON ticket_history.user_id = worker.id JOIN user ON worker.user_id = user.id WHERE ticket_id = ?;',
             id,
             (err,result) => {
                 if (err)

@@ -17,8 +17,8 @@ class Project
     static get_user_projects(id)
     {
         return new Promise((resolve,reject) => sql.query(
-            'SELECT * FROM project WHERE id IN ( SELECT worker.project_id FROM worker WHERE user_id = ? );',
-            id,
+            'SELECT project.id, project.status, project.title, project.info, worker.role FROM project JOIN worker ON project.id = worker.project_id AND worker.user_id = ? WHERE project.id IN (SELECT worker.project_id FROM worker WHERE user_id = ?);',
+            [id,id],
             (err,result) => {
                 if (err)
                     return reject(err);

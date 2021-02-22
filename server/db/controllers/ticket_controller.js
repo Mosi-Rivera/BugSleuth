@@ -50,12 +50,7 @@ exports.get_by_project = async (req,res) => {
 exports.get_by_assigned_user = async (req,res) => {
     try
     {
-        let worker_id = Number.parseInt(req.params.worker_id);
-        if (isNaN(worker_id))
-            throw new Error('Invalid id.');
-        let query = req.query;
-        query.assigned_to = worker_id;
-        res.satus(200).json(await Ticket.get_match({assigned_to: worker_id}));
+        res.status(200).json(await Ticket.get_by_assigned_user(req.user.id));
     }
     catch(err)
     {
@@ -131,7 +126,8 @@ exports.get_by_id = async (req,res) => {
             TicketComment.get_all_by_id(id),
             TicketHistory.get_all_by_id(id)
         ]);
-        res.status(200).json({ticket,comments,history});
+        const worker = res.locals.worker;
+        res.status(200).json({ticket,comments,history,worker_id: worker.id, worker_role: worker.role });
     }
     catch(err)
     {
@@ -146,8 +142,8 @@ exports.update_by_id = async (req,res) => {
         const id = req.params.ticket_id;
         if (!id)
             throw new Error('No id provided.');
-        await Ticket.update_by_id(id,res.locals.worker.id,req.body)
-        res.status(200).send('Updated.');
+        const response = await Ticket.update_by_id(id,res.locals.worker.id,req.body)
+        res.status(200).json({response});
     }
     catch(err)
     {
