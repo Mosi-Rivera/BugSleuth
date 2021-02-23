@@ -74,7 +74,9 @@ exports.create_worker = async (req,res) => {
 exports.delete_worker = async (req,res) => {
     try
     {
-        let worker_id = Number.parseInt(re.params.worker_id);
+        let {role} = res.locals.worker;
+        let other_role = res.locals.other_worker.role;
+        let worker_id = Number.parseInt(req.params.worker_id);
         if (isNaN(worker_id))
             throw new Error('Invalid id.');
         let worker = res.locals.worker;
@@ -84,7 +86,25 @@ exports.delete_worker = async (req,res) => {
         if (other_worker.role === 1 && worker.role !== 0)
             return res.status(401).send('Unauthorized.');
         await Worker.delete_by_id(worker_id);
-        res.status(200).send('Worker (' + worker_id + ') deleted.');
+        res.status(200).json({message: 'worker deleted.'});
+    }
+    catch(err)
+    {
+        console.log(err);
+        res.status(500).json(err);
+    }
+}
+
+exports.get_workers_by_id = async (req,res) => {
+    const project_id = Number.parseInt(req.params.project_id);
+    try
+    {
+        if (isNaN(project_id))
+            throw new Error('Invalid id');
+        const result = await Worker.get_by_project_id(project_id);;
+        res.status(200).json(
+            result
+        );
     }
     catch(err)
     {

@@ -71,7 +71,7 @@ class Worker
         ))
     }
 
-    static delete_by_id()
+    static delete_by_id(id)
     {
         return new Promise((resolve,reject) => sql.query(
             'DELETE FROM worker WHERE id = ?;',

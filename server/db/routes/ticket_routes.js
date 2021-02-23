@@ -6,7 +6,8 @@ const {
     delete_by_id,
     get_match,
     create_comment,
-    get_by_assigned_user
+    get_by_assigned_user,
+    set_assigned_worker
 } = require('../controllers/ticket_controller');
 const {
     is_logged_in,
@@ -20,7 +21,8 @@ module.exports = function(app)
     .post(is_logged_in,works_in_project(3),create);
 
     app.route('/tickets/assigned')
-    .get(is_logged_in,get_by_assigned_user);
+    .get(is_logged_in,get_by_assigned_user)
+    .put(is_logged_in,works_in_project(2),set_assigned_worker);
 
     app.route('/tickets/:ticket_id')
     .get(is_logged_in,works_in_project(3),get_by_id)

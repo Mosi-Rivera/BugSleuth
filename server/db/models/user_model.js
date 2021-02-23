@@ -21,6 +21,19 @@ class User
         return User.create(this);
     }
 
+    static get_by_worker_id(id)
+    {
+        return new Promise((resolve,reject) => sql.query(
+            'SELECT user.* FROM worker JOIN user ON worker.user_id = user.id WHERE worker.id = ?;',
+            id,
+            (err,result) => {
+                if (err)
+                    return reject(err);
+                return resolve(result);
+            }
+        ))
+    }
+
     static set_confirmation_code(email,confirmation_code){
         return new Promise((resolve,reject) => sql.query(
             'UPDATE user SET confirmation_code = ? WHERE email = ?;',

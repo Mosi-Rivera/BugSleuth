@@ -36,9 +36,19 @@ exports.get_user_projects = async (req,res) => {
 }
 
 exports.create = async (req,res) => {
-    let new_project = new Project(req.body);
     try
     {
+        const title = req.body.title;
+        const info = req.body.info;
+        const status = parseInt(req.body.status);
+        if (typeof title !== 'string' || title.replace(/\s+/g, '') == '')
+            return res.status(500).send('Invalid project name.');
+        if (typeof info !== 'string' || info.replace(/\s+/g, '') == '')
+            return res.status(500).send('Invalid description.');
+        if (isNaN(status) || status < 0 || status > 7)
+            return res.status(500).send('Invalid status.');
+        let new_project = new Project(req.body);
+
         new_project.id = await new_project.save();
 
         let new_worker = new Worker({
@@ -56,7 +66,8 @@ exports.create = async (req,res) => {
         console.log(err);
         if (new_project.id)
             Project.remove_by_id(new_project.id);
-        res.status(500).json(err);
+        err.name = '';
+        res.status(500).send(err);
     }
 }
 

@@ -17,7 +17,7 @@ exports.works_in_project = (min_role) => {
             let worker_id = Number.parseInt(req.body.worker_id || req.params.worker_id);
             if (worker_id && isNaN(project_id))
             {
-                let worker = await Worker.get_by_id();
+                let worker = await Worker.get_by_id(worker_id);
                 if (worker)
                 {
                     project_id = Number.parseInt(worker.project_id);

@@ -6,24 +6,21 @@ const {isNaN} = Number;
 exports.set_assigned_worker = async (req,res) => {
     try
     {
-        let project_id = Number.parseInt(req.body.project_id);
+        console.log('BIG CALL!');
+        const worker = res.locals.worker;
         let ticket_id = Number.parseInt(req.body.ticket_id);
         let worker_id = Number.parseInt(req.body.worker_id);
-        if (isNaN(project_id) || isNaN(ticket_id) || isNaN(worker_id))
+        if (isNaN(ticket_id) || isNaN(worker_id))
             throw new Error('Invalid project or ticket id.');
-        let worker = await Worker.get_match({
-            id: worker_id,
-            project_id
-        })[0];
-        if (!worker)
-            throw new Error('Invalid worker.');
-        await Ticket.update_by_id(ticket_id,{assigned_to: worker_id});
-        res.status(200).send('Ticket assigned to worker: ' + worker_id);
+        if (worker_id !== worker.id && worker.role > 1)
+            throw new Error('Unauthorized.');
+        await Ticket.update_by_id(ticket_id,req.user.id,{assigned_to: worker_id});
+        res.status(200).json({message: 'success.'});
     }
     catch(err)
     {
         console.log(err);
-        res.status(500).json(err);
+        res.status(500).send('Error.');
     }
 }
 
@@ -96,13 +93,26 @@ exports.create_comment = async (req,res) => {
     catch(err)
     {
         console.log(err);
-        res.status(500).json(err);
+        err.name = '';
+        res.status(500).send(err);
     }
 }
 
 exports.create = async (req,res) => {
     try
     {
+        const status = parseInt(req.body.status);
+        const severity = parseInt(req.body.severity);
+        const task = req.body.task;
+        const description = req.body.description;
+        if (typeof task !== 'string' || task.replace(/\s+/g, '') == '')
+            return res.status(500).send('Invalid ticket title.');
+        if (typeof description !== 'string' || description.replace(/\s+/g, '') == '')
+            return res.status(500).send('Invalid ticket description.');
+        if (isNaN(status) || status < 0 || status > 7)
+            return res.status(500).send('Invalid status.');
+        if (isNaN(severity) || severity < 0 || severity > 2)
+            return res.status(500).send('Invalid severity.');
         const worker = res.locals.worker;
         const new_ticket = new Ticket(req.body,worker.id);
         new_ticket.id = await new_ticket.save();
@@ -111,7 +121,7 @@ exports.create = async (req,res) => {
     catch(err)
     {
         console.log(err);
-        res.status(500).json(err);
+        res.status(500).send('Server Error.');
     }
 }
 

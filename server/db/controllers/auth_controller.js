@@ -20,7 +20,7 @@ exports.signup = async (req,res,next) => {
         if (!email_validator.validate(email))
             throw new Error('Invalid email.');
         if (!password_validator.validate(password))
-            throw new Error('Invalid password.');
+            throw new Error('Password must contain at least 8 characters, an uppercase and lowercase letter, two numbers and must not have spaces.');
         const user = await User.get_by_email(req.body.email);
         if (user)
         {
@@ -59,7 +59,8 @@ exports.signup = async (req,res,next) => {
     catch(err)
     {
         console.log(err);
-        res.status(500).json(err);
+        err.name = '';
+        res.status(500).send(err.toString());
     }
 }
 
