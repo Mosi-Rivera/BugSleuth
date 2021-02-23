@@ -1,5 +1,6 @@
 import {useHistory,useLocation} from 'react-router-dom';
 import {useEffect,useState} from 'react';
+import ErrorText from '../../components/error_text/error_text';
 import('./landing.css');
 const get_form_data = e => {
     let data = new FormData(e.target);
@@ -14,6 +15,8 @@ const LandingPage = props => {
     const history = useHistory();
     const location = useLocation();
     const [show_login,set_show_login] = useState(true);
+    const [login_error,set_login_error] = useState(null);
+    const [signup_error,set_signup_error] = useState(null);
     const toggle_show_login = () => set_show_login(!show_login);
     const handle_signup = async e => {
         e.preventDefault();
@@ -29,7 +32,9 @@ const LandingPage = props => {
         }
         catch(err)
         {
-            console.log(err);
+            err.text().then(res => {
+                set_signup_error(res);
+            });
         }
     }
     const handle_login = async e => {
@@ -46,7 +51,7 @@ const LandingPage = props => {
         }
         catch(err)
         {
-            console.log(err);
+            set_login_error('Invalid username or password.');
         }
     }
     useEffect(() => {
@@ -74,12 +79,13 @@ const LandingPage = props => {
                     <h1>Sign in to BugSleuth</h1>
                     <div className='form'>
                         <form onSubmit={handle_login}>
+                            <ErrorText error={login_error} />
                             <div>
-                                <label for='email'>email</label>
+                                <label htmlFor='email'>email</label>
                                 <input type='email' name='email'/>
                             </div>
                             <div>
-                                <label for='password'>password</label>
+                                <label htmlFor='password'>password</label>
                                 <input type='password' name='password'/>
                             </div>
                             <input type='submit' value='Sign In'/>
@@ -92,12 +98,13 @@ const LandingPage = props => {
                     <h1>Sign up to BugSleuth</h1>
                     <div className='form'>
                         <form onSubmit={handle_signup}>
+                            <ErrorText error={signup_error} />
                             <div>
-                                <label for='email'>email</label>
+                                <label htmlFor='email'>email</label>
                                 <input type='email' name='email'/>
                             </div>
                             <div>
-                                <label for='password'>password</label>
+                                <label htmlFor='password'>password</label>
                                 <input type='password' name='password'/>
                             </div>
                             <input type='submit' value='Sign Up'/>

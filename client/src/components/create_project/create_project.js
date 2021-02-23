@@ -1,8 +1,10 @@
 import { useState }     from 'react';
 import {Link, useHistory}           from 'react-router-dom';
+import ErrorText from '../error_text/error_text';
 import('./create_project.css');
 const CreateProject = () => {
     const history = useHistory();
+    const [error_text,set_error_text] = useState(null);
     const [waiting_for_response,set_waiting_for_response] = useState(false);
     const handle_submit = async e => {
         try
@@ -22,6 +24,7 @@ const CreateProject = () => {
         catch(err)
         {
             set_waiting_for_response(false);
+            err.text().then(res => set_error_text(res));
             console.log(err);
         }
     }
@@ -31,6 +34,7 @@ const CreateProject = () => {
             <h1>/Create a new project</h1>
         </div>
         <form onSubmit={handle_submit} id='create-project'>
+            <ErrorText error={error_text}/>
             <div>
                 <label htmlFor='title'>Project Name</label>
                 <input type='text' name='title' />

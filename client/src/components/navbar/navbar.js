@@ -1,7 +1,8 @@
 import {memo} from 'react';
-import {Link} from 'react-router-dom';
+import {Link,useHistory} from 'react-router-dom';
 import('./navbar.css');
 const NavBar = (props) => {
+    const history = useHistory();
     const handle_logout = async () => {
         try
         {

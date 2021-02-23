@@ -1,10 +1,12 @@
 import {Redirect, useHistory, useLocation, Link, useParams} from 'react-router-dom';
 import {status,severity} from '../../value_to_string';
 import {useState} from 'react';
+import ErrorText from '../error_text/error_text';
 const CreateTicket = props => {
     const {project_id} = useParams();
     const location  = useLocation();
     const history   = useHistory();
+    const [error_text,set_error_text] = useState(null);
     const [waiting_for_response,set_waiting_for_response] = useState(false);
     const handle_submit = async e => {
         try
@@ -30,6 +32,7 @@ const CreateTicket = props => {
         catch(err)
         {
             set_waiting_for_response(false);
+            err.text().then(res => set_error_text(res));
             console.log(err);
         }
     }
@@ -40,6 +43,7 @@ const CreateTicket = props => {
         </div>
         <div>
             <form onSubmit={handle_submit} id='create-project'>
+                <ErrorText error={error_text}/>
                 <div>
                     <label htmlFor='task'>Ticket Title</label>
                     <input type='text' name='task'/>

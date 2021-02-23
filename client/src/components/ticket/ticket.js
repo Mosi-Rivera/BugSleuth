@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useParams, useHistory } from 'react-router-dom';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -7,12 +7,14 @@ import Tab from '../tab/tab';
 import {Link} from 'react-router-dom';
 import SelectInput from '../select_input/select_input';
 import {status_str,severity_str} from '../../value_to_string';
+import ErrorText from '../error_text/error_text';
+import parse_timestamp from '../../parse_timestamp';
 import('./ticket.css');
 
 const Comment = props => (<div className='comment'>
     <div className='comment-header'>
         <span>{props.data?.username}</span>
-        <span className='created'>{props.data?.created}</span>
+        <span className='created'>{parse_timestamp(props.data?.created)}</span>
     </div>
     <div>
         {props.data?.message}
@@ -26,6 +28,7 @@ const TicketComments = props => (<div>
     <div className='write-comment'>
         <div>
             <form id='ticket-comment' onSubmit={props.submit_comment}>
+                <ErrorText error={props.error}/>
                 <div>
                     <textarea form='ticket-comment' name='message' placeholder='Leave a comment...'/>
                 </div>
@@ -53,65 +56,85 @@ const TicketHistory = props => (<div className='c-table'>
                 props.data?.map((elem,i) => <tr key={'history-row' + i}>
                     <td>{elem?.email}</td>
                     <td>{elem?.field}   </td>
-                    <td>{elem.field == 'severity' ? severity_str(elem?.from_value) : status_str(elem?.from_value) }</td>
-                    <td>{elem.field == 'severity' ? severity_str(elem?.to_value) : status_str(elem?.to_value) }</td>
-                    <td>{elem?.created}    </td>
+                    <td>{elem.field == 'severity' ? severity_str(elem?.from_value) : ( elem.field == 'status' ? status_str(elem?.from_value) : elem?.from_value ) }</td>
+                    <td>{elem.field == 'severity' ? severity_str(elem?.to_value) : ( elem.field == 'status' ? status_str(elem?.to_value) : elem?.to_value ) }</td>
+                    <td>{parse_timestamp(elem?.created)}    </td>
                 </tr>)
             }
         </tbody>
     </table>
 </div>); 
 
-const TicketData = props => (<div className='ticket-data'>
-    <div>
-        <span>title</span>
-        <span>{props.data?.task}</span>
+const TicketData = props => {
+    const options = useMemo(() => {
+        if (!props.workers)
+            return [];    
+        return props.admin || props.data.assigned_to ? (
+            [{value: null, name: 'n/a'}].concat(props.workers.map((elem) => ({
+                value: elem.id,
+                name: elem.email,
+            })))
+        ) : (
+            [{value: null, name: 'n/a'},{value: props.worker_id, value: props.user.email}]
+        )
+    }
+    ,[props.workers]);
+    return <div className='ticket-data'>
+        <div>
+            <span>title</span>
+            <span>{props.data?.task}</span>
+        </div>
+        <div>
+            <span>description</span>
+            <span>{props.data?.description}</span>
+        </div>
+        <div>
+            <span>assigned to</span>
+            { props.workers && <SelectInput options={options}
+            disabled={!props.admin && props.assigned}
+            onChange={e => props.assign_ticket(e)}
+            onFocus={e => e.target.previous_value = {value: e.target.value, name: e.target.options[e.target.selectedIndex].innerHTML}}
+            default_value={props?.data?.assigned_to}
+            /> }
+        </div>
+        <div>
+            <span>status</span>
+            {
+                props.assigned || props.admin ? (
+                    <SelectInput options={[
+                        {value: 0,name: status_str(0)},
+                        {value: 1,name: status_str(1)},
+                        {value: 2,name: status_str(2)},
+                        {value: 3,name: status_str(3)},
+                        {value: 4,name: status_str(4)},
+                        {value: 5,name: status_str(5)},
+                        {value: 6,name: status_str(6)},
+                    ]} 
+                    onFocus={e => e.target.previous_value = e.target.value}
+                    onChange={props.set_status}
+                    default_value={props.data?.status}
+                    />
+                ) : <span>{status_str(props.data?.status)}</span> 
+            }
+        </div>
+        <div>
+            <span>severity</span>
+            {
+                props.assigned || props.admin ? (
+                    <SelectInput options={[
+                        {value: 0,name: severity_str(0)},
+                        {value: 1,name: severity_str(1)},
+                        {value: 2,name: severity_str(2)},
+                    ]} 
+                    onFocus={e => e.target.previous_value = e.target.value}
+                    onChange={props.set_severity}
+                    default_value={props.data?.severity}
+                    />
+                ) : <span>{severity_str(props.data?.severity)}</span> 
+            }
+        </div>
     </div>
-    <div>
-        <span>description</span>
-        <span>{props.data?.description}</span>
-    </div>
-    <div>
-        <span>assigned to</span>
-        <span>{props.assigned_to ? props.assigned_to : 'n/a'}</span>
-    </div>
-    <div>
-        <span>status</span>
-        {
-            props.assigned || props.admin ? (
-                <SelectInput options={[
-                    {value: 0,name: status_str(0)},
-                    {value: 1,name: status_str(1)},
-                    {value: 2,name: status_str(2)},
-                    {value: 3,name: status_str(3)},
-                    {value: 4,name: status_str(4)},
-                    {value: 5,name: status_str(5)},
-                    {value: 6,name: status_str(6)},
-                ]} 
-                onFocus={e => e.target.previous_value = e.target.value}
-                onChange={props.set_status}
-                default_value={props.data?.status}
-                />
-            ) : <span>{status_str(props.data?.status)}</span> 
-        }
-    </div>
-    <div>
-        <span>severity</span>
-        {
-            props.assigned || props.admin ? (
-                <SelectInput options={[
-                    {value: 0,name: severity_str(0)},
-                    {value: 1,name: severity_str(1)},
-                    {value: 2,name: severity_str(2)},
-                ]} 
-                onFocus={e => e.target.previous_value = e.target.value}
-                onChange={props.set_severity}
-                default_value={props.data?.severity}
-                />
-            ) : <span>{severity_str(props.data?.severity)}</span> 
-        }
-    </div>
-</div>);
+};
 
 const Ticket = props => {
     const {ticket_id}   = useParams();
@@ -123,6 +146,33 @@ const Ticket = props => {
     const [history,set_history]         = useState([]);
     const [worker_id,set_worker_id]     = useState(null);
     const [worker_role,set_worker_role] = useState(null);
+    const [workers,set_workers]         = useState(null);
+    const [comment_error_text,set_comment_error_text] = useState(null);
+    const handle_assign_ticket = async (e) => {
+        const id = e.target.value;
+        try
+        {
+            const {assign_ticket} = await import('../../api/routes/ticket');
+            await assign_ticket({worker_id: id,ticket_id: ticket.id});
+            let _tmp = {...ticket};
+            _tmp.assigned_user = id;
+            set_ticket(_tmp);
+            _tmp = [...history];
+            _tmp.push({
+                email: props.user?.email,
+                field: 'assigned_to',
+                from_value: e.target.previous_value.name,
+                to_value: e.target.options[e.target.selectedIndex].innerHTML,
+                created: (new Date()).toDateString()
+            });
+            set_history(_tmp);
+        }
+        catch(err)
+        {
+            e.target.value = e.previous_value.value;
+            console.log(err);
+        }
+    }
     const handle_submit_severity = async e => {
         e.preventDefault();
         try
@@ -175,14 +225,15 @@ const Ticket = props => {
         try
         {
             if (data.get('message')?.replace(/\s+/g, '') == '')
-                return;
+                return set_comment_error_text('Empty comment.');
             const {submit_comment} = await import('../../api/routes/ticket');
             const response = await submit_comment({ticket_id: ticket.id, message: data.get('message')});
-            response.created = (new Date()).toDateString();
+            response.created = (new Date()).toUTCString();
             let _tmp = [...comments];
             _tmp.push({...response});
             set_comments(_tmp);
             e.target.reset();
+            set_comment_error_text(null);
         }
         catch(err)
         {
@@ -194,12 +245,14 @@ const Ticket = props => {
             try
             {
                 const {get_ticket} = await import('../../api/routes/ticket');
+                const {get_workers_by_project} = await import('../../api/routes/worker');
                 const {ticket,comments,history,worker_id,worker_role} = await get_ticket(ticket_id);
                 set_ticket(ticket);
                 set_comments(comments);
                 set_history(history);
                 set_worker_id(worker_id);
                 set_worker_role(worker_role);
+                set_workers(await get_workers_by_project(ticket.project_id));
             }
             catch(err)
             {
@@ -222,14 +275,14 @@ const Ticket = props => {
             <Col sm={12} md={9}>
                 {
                     tab === 0 ? (
-                        <TicketComments submit_comment={handle_submit_comment} data={comments} />
+                        <TicketComments error={comment_error_text} submit_comment={handle_submit_comment} data={comments} />
                     ) : (
                         <TicketHistory data={history} />
                     )
                 }
             </Col>
             <Col sm={12} md={3}>
-                <TicketData set_status={handle_submit_status} set_severity={handle_submit_severity} assigned={worker_id === ticket.assigned_to} admin={worker_role <= 1} data={ticket} />
+                <TicketData worker_id={worker_id} assign_ticket={handle_assign_ticket} workers={workers} set_status={handle_submit_status} set_severity={handle_submit_severity} assigned={worker_id === ticket.assigned_to} admin={worker_role <= 1} data={ticket} />
             </Col>
         </Row>
     </div> : <div></div>

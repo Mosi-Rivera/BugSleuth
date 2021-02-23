@@ -6,7 +6,7 @@ function ProjectList(props)
         {
             !props.data || props.data?.length == 0 ? 
             <span className='empty-list'>{props.empty_text}</span> :
-            props.data?.map((data,i) => <props.component key={'card-item-' + i} data={data}/>)
+            props.data?.map((data,i) => <props.component click_event={props.click_event} key={'card-item-' + i} data={data}/>)
         }
     </div>
 }

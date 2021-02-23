@@ -1,5 +1,18 @@
 import {BASE_URL,error_handler} from '../environment';
 
+export const assign_ticket = data => (
+    fetch(BASE_URL + '/tickets/assigned', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(data)
+    })
+    .then(error_handler)
+    .then(res => res.json())
+)
+
 export const get_assigned_tickets = () => (
     fetch(BASE_URL + '/tickets/assigned', {
         method: 'GET',

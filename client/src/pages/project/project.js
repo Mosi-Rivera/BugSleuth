@@ -23,7 +23,7 @@ const AllTickets = props => (
 );
 
 const Workers = props => (
-    <CardList component={WorkerCard} data={props.data} />
+    <CardList component={WorkerCard} data={props.data} click_event={props.click_event}/>
 );
 
 const StickyBarBody = memo(props => <div>
@@ -44,6 +44,33 @@ const ProjectPage = props => {
     const [worker,set_worker]   = useState(null);
     const [show_add_worker,set_show_add_modal] = useState(false);
     const handle_hide = () => set_show_add_modal(false);
+    const handle_remove_worker = async (id,role) => {
+        let old_value;
+        if (worker?.role > 1)
+                return;
+        if (worker?.role == 1 && role <= 1)
+            return;
+        try
+        {
+            const {remove_worker} = await require('../../api/routes/worker');
+            set_workers(workers.filter(elem => {
+                if (elem.id === id) 
+                {
+                    old_value = elem;
+                    return false
+                }; 
+                return true;
+            }));
+            await remove_worker(id);
+        }
+        catch(err)
+        {
+            let _tmp = [...workers];
+            _tmp.push(old_value);
+            set_workers(_tmp);
+            console.log(err);
+        }
+    }
     const active_tab = () => {
         if (tab == 0)
             return <AllTickets data={tickets} />;
@@ -51,7 +78,7 @@ const ProjectPage = props => {
             return <MySubmittedTickets  worker_id={worker.id} data={tickets} />;
         else if (tab == 2)
             return <MyAssignedTickets worker_id={worker.id} data={tickets} />;
-        return <Workers data={workers} />;
+        return <Workers click_event={handle_remove_worker} data={workers} />;
     };
     const handle_add_worker = (worker) => {
         let _tmp = [...workers];
